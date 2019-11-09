@@ -8,6 +8,7 @@
 </head>
 <body>
     <button class="dawdawd">登录</button>
+    <p class="dawdaw"></p>
     <script src="./sdk/webim.config.js"></script>
     <script src="./sdk/strophe-1.2.8.min.js"></script>
     <script src="./sdk/websdk-1.4.12.js"></script>
@@ -44,6 +45,7 @@ connection.listen({
   onOpened: function (message) {
     console.log('message ==> ', message);
     console.log('登录成功');
+    document.querySelector('.dawdaw').innerHTML='登录成功'
     //获取好友列表
   },
   //监听文本消息
