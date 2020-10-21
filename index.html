@@ -1,101 +1,50 @@
+
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
 </head>
+
 <body>
-    <button class="dawdawd">登录</button>
-    <p class="dawdaw"></p>
-    <script src="./sdk/webim.config.js"></script>
-    <script src="./sdk/strophe-1.2.8.min.js"></script>
-    <script src="./sdk/websdk-1.4.12.js"></script>
-
-    <script>
-    //创建连接
-var connection = new WebIM.connection({
-  url: WebIM.config.xmppURL
-});
-var button = document.querySelector('.dawdawd')
-button.onclick=function(){
-    connection.open({
-      //请求地址
-      apiUrl: WebIM.config.apiURL,
-      //用户名
-      user: 'aisi',
-      //密码
-      pwd: '123456',
-      //应用密钥
-      appKey: WebIM.config.appkey,
-      //登录成功执行
-      success: function (data) {
-        console.log('data ==> ', data);
-        
-      },
-      //登录失败
-      error: function () {
-      }
-    });
-}
-//监听
-connection.listen({
-  //监听用户登录
-  onOpened: function (message) {
-    console.log('message ==> ', message);
-    console.log('登录成功');
-    document.querySelector('.dawdaw').innerHTML='登录成功'
-    //获取好友列表
-  },
-  //监听文本消息
-  onTextMessage: function (message) {
-    console.log('消息message ==> ', message);
-    let registemsg=message.ext.registe
-    if(message.ext.addFsccess=="aisi"){//证明是更新数据MESSAGEdata
-      let MESSAGEdata = JSON.parse(localStorage.getItem('MESSAGEdata'))==undefined?{Date:new Date().getTime(),data:{}}:JSON.parse(localStorage.getItem('MESSAGEdata'));
-
-        if(message.ext.registe.length!=0){
-          console.log('registemsg遍历了')
-            MESSAGEdata.Date=new Date().getTime();//管理员数据更新后就重新计算时间
-            for(var i = 0;i<registemsg.length;i++){
-              MESSAGEdata.data[registemsg[i].username]=registemsg[i]
+    <canvas id="myCanvas" width="448" height="448">
+       
+    </canvas>
+    <img src="http://b306.photo.store.qq.com/psb?/V13bzEaY0sUSmi/l24CwEr4tsiHqWc6GAHgjTzvoFdsASMJDGKjZQjjs14!/b/dDIBAAAAAAAA&bo=gAc4BIAHOAQRBzA!&rf=viewer_4" id="img" alt="" />
+    <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
+    <!-- <script>
+        $.ajax({
+            type: "GET",
+            url: "",
+            success: function (data) {
+                console.log(data);
+            },
+            error: function (error) {
+                console.log(error);
             }
+        }); 
+    </script> -->
+    <script>
+        // 通过js获取图像数据
+        var canvas_obj = document.getElementById("myCanvas");   // 获取canvas标签对象
+        var ctx = canvas_obj.getContext("2d");                  // 设置在画布上绘图的环境
+        var img_obj = document.getElementById("img");           // 获取img标签对象
+        ctx.drawImage(img_obj, 0, 0);                           // 将图片绘制到画布上
+        var imgData_obj = ctx.getImageData(0, 0, canvas_obj.width, canvas_obj.height);    // 获取画布上的图像像素矩阵
+        var imgData = imgData_obj.data;     // 获取到的数据为一维数组，包含图像的RGBA四个通道数据
+        // console.log(imgData.length);
+
+        // 将获取到的图像数据去除A通道
+        var imgArr = [];
+        for (var i = 0; i < imgData.length; i += 4) {
+            imgArr.push(imgData[i], imgData[i + 1], imgData[i + 2])
         }
-        localStorage.setItem('MESSAGEdata',JSON.stringify(MESSAGEdata));
-        if(message.ext.word.Date<MESSAGEdata.Date){
-                 enter(MESSAGEdata,message.from);
-        }
-    }
-    }    
-})
-
-
-
-
-function enter(MESSAGEdata,msgto) {
-    var id = connection.getUniqueId(); // 生成本地消息id
-    var msg = new WebIM.message('txt', id); // 创建文本消息
-    msg.set({
-      msg: 'n你的外卖到了！', // 消息内容
-      to: msgto, // 接收消息对象（用户id）
-      roomType: false,
-      ext:{
-        addFsccess: "$",
-        MESSAGEdata
-      }, 
-      success: function (id, serverMsgId) {
-        console.log('发送消息成功',id, serverMsgId);
-      },
-      error: function () {
-        console.log('发送消息失败');
-        
-      }
-    });
-    //发送消息
-    connection.send(msg.body);
-  }
+        alert(imgArr.length)
 
     </script>
 </body>
+
 </html>
